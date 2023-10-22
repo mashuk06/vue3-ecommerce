@@ -1,11 +1,11 @@
 <script setup>
+import { ref, reactive } from 'vue'
 
 </script>
 
 <template>
-  <router-view></router-view>
+    <p>This is about page</p>
 </template>
 
 <style scoped>
-
 </style>

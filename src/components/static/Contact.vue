@@ -3,9 +3,8 @@
 </script>
 
 <template>
-  <router-view></router-view>
+    <p>This is contact page</p>
 </template>
 
 <style scoped>
-
 </style>
