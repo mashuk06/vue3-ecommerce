@@ -1,5 +1,46 @@
 <script setup>
+    import { ref } from 'vue'
+    import { useAuthStore } from '../../stores/authStore'
+    import { toast } from 'vue3-toastify'
+    import 'vue3-toastify/dist/index.css'
+    import { useRouter } from 'vue-router'
 
+    const name = ref('')
+    const email = ref('')
+    const password = ref('')
+    const confirmPassword = ref('')
+    const agreement = ref(false)
+
+    const router = useRouter()
+    const auth = useAuthStore()
+
+    const validation = () => {
+        if (!name.value && !email.value && !password.value && !confirmPassword.value) {
+            toast.error('All fields are required!')
+            return false
+        }
+        const userExists = auth.checkExistingUser(email.value)
+        if (userExists) {
+            toast.error('User already exists. Try login!')
+            return false
+        }
+        const passwordMatched = auth.checkPassword(password.value, confirmPassword.value)
+        if (!passwordMatched) {
+            toast.error('Password and Confirm Password did not match. Try again!')
+            return false
+        }
+        return true
+    }
+    const signUp = () => {
+        if (validation()) {
+            const user = { name: name.value, email: email.value, password: password.value };
+            auth.registration(user)
+            toast.success('Registration successful. You can login now !')
+            setTimeout(() => {
+                router.push('/login')
+            }, 1000)
+        }
+    }
 </script>
 
 <template>
@@ -9,43 +50,43 @@
             <p class="text-gray-600 mb-6 text-sm">
                 Register As A New Customer
             </p>
-            <form action="#" method="post" autocomplete="off">
+            <form action="javascript:;" autocomplete="off">
                 <div class="space-y-2">
                     <div>
                         <label for="name" class="text-gray-600 mb-2 block">Full Name</label>
-                        <input type="text" name="name" id="name"
+                        <input v-model="name" type="text"
                             class="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400"
                             placeholder="Enter your full name">
                     </div>
                     <div>
                         <label for="email" class="text-gray-600 mb-2 block">Email address</label>
-                        <input type="email" name="email" id="email"
+                        <input v-model="email" type="email"
                             class="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400"
                             placeholder="Enter your email address">
                     </div>
                     <div>
                         <label for="password" class="text-gray-600 mb-2 block">Password</label>
-                        <input type="password" name="password" id="password"
+                        <input v-model="password" type="password"
                             class="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400"
-                            placeholder="*******">
+                            placeholder="******">
                     </div>
                     <div>
                         <label for="confirm" class="text-gray-600 mb-2 block">Confirm password</label>
-                        <input type="password" name="confirm" id="confirm"
+                        <input v-model="confirmPassword" type="password"
                             class="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400"
-                            placeholder="*******">
+                            placeholder="******">
                     </div>
                 </div>
                 <div class="mt-6">
                     <div class="flex items-center">
-                        <input type="checkbox" name="aggrement" id="aggrement"
+                        <input type="checkbox" v-model="agreement"
                             class="text-primary focus:ring-0 rounded-sm cursor-pointer">
                         <label for="aggrement" class="text-gray-600 ml-3 cursor-pointer">I have read and agree to the <a
                                 href="#" class="text-primary">terms & conditions</a></label>
                     </div>
                 </div>
                 <div class="mt-4">
-                    <button type="submit"
+                    <button type="submit" @click.prevent="signUp"
                         class="block w-full py-2 text-center text-white bg-primary border border-primary rounded hover:bg-transparent hover:text-primary transition uppercase font-roboto font-medium">create
                         account</button>
                 </div>
