@@ -51,6 +51,9 @@
       order.createOrder(cart.cart)
       cart.clearCart()
       toast.success('Order placed successfully')
+      setTimeout(() => {
+        router.push('orders')
+      },2000)
     }
   }
 </script>

@@ -1,6 +1,7 @@
 <script setup>
-    import { ref, onBeforeMount } from 'vue'
+    import { ref, onBeforeMount, onMounted, computed } from 'vue'
     import axios from 'axios'
+    import { useRoute } from 'vue-router';
     import { useCartStore } from '../stores/cartStore'
     import { useWishlistStore } from '../stores/wishlistStore'
     import { toast } from 'vue3-toastify'
@@ -8,6 +9,42 @@
 
     const products = ref([])
     const categories = ref([])
+    const route = useRoute()
+
+    const sortProducts = (event) => {
+        const sortOrder = event.target.value;
+        if (sortOrder === 'price-low-to-high') {
+            products.value = [...products.value].sort((a, b) => a.price - b.price);
+        } else if (sortOrder === 'price-high-to-low') {
+            products.value = [...products.value].sort((a, b) => b.price - a.price);
+        } else {
+            products.value = [...products.value]; // Reset to original order
+        }
+    }
+
+    const searchProducts = (event) => {
+        const searchKey = event.target.value
+        if (searchKey.length > '2') {
+            products.value = products.value.filter(product => {
+                return product.title.toLowerCase().includes(searchKey)
+            })
+        } else {
+            const categoryParam = route.params.category
+            if (categoryParam) {
+                axios.get(`https://dummyjson.com/products/category/${categoryParam}`)
+                    .then(res => {
+                        products.value = []
+                        products.value = [...products.value, ...res.data.products]
+                    });
+            } else {
+                axios.get('https://dummyjson.com/products?limit=9')
+                    .then(res => {
+                        products.value = res.data.products
+                    })
+            }
+        }
+    }
+
 
     const cart = useCartStore()
     const addToCart = (product) => {
@@ -22,9 +59,9 @@
     const wishList = useWishlistStore()
     const addToWishList = (product) => {
         const result = wishList.addToWishList(product)
-        if(result.success){
+        if (result.success) {
             toast.success(result.message)
-        }else{
+        } else {
             toast.error(result.message)
         }
     }
@@ -55,6 +92,17 @@
                 categories.value = res.data
             })
     })
+
+    onMounted(() => {
+        const categoryParam = route.params.category
+        if (categoryParam) {
+            axios.get(`https://dummyjson.com/products/category/${categoryParam}`)
+                .then(res => {
+                    products.value = []
+                    products.value = [...products.value, ...res.data.products]
+                });
+        }
+    })
 </script>
 
 <template>
@@ -84,22 +132,17 @@
         <!-- products -->
         <div class="col-span-3">
             <div class="flex items-center mb-4">
-                <select name="sort" id="sort"
+                <select @change="sortProducts($event)" name="sort" id="sort"
                     class="w-44 text-sm text-gray-600 py-3 px-4 border-gray-300 shadow-sm rounded focus:ring-primary focus:border-primary">
                     <option value="">Default sorting</option>
-                    <option value="price-low-to-high">Price low to high</option>
+                    <option value="price-low-to-high" @click="highToLow">Price low to high</option>
                     <option value="price-high-to-low">Price high to low</option>
                 </select>
 
-                <div class="flex gap-2 ml-auto">
-                    <div
-                        class="border border-primary w-10 h-9 flex items-center justify-center text-white bg-primary rounded cursor-pointer">
-                        <i class="fa-solid fa-grip-vertical"></i>
-                    </div>
-                    <div
-                        class="border border-gray-300 w-10 h-9 flex items-center justify-center text-gray-600 rounded cursor-pointer">
-                        <i class="fa-solid fa-list"></i>
-                    </div>
+                <div class="flex gap-1 ml-auto mr-2">
+                    <input type="text" @input="searchProducts($event)" name="search" id="search"
+                        class="w-full border border-primary border-r-0 rounded mr-2  focus:outline-none"
+                        placeholder="search">
                 </div>
             </div>
 
@@ -111,11 +154,11 @@
                             :alt="product.title" class="w-full">
                         <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center
                         justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                            <a href="#"
+                            <router-link :to="{ name: 'product' , params: { id: product.id }}"
                                 class="text-white text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-gray-800 transition"
                                 title="view product">
                                 <i class="fa-solid fa-magnifying-glass"></i>
-                            </a>
+                            </router-link>
                             <a @click.prevent="addToWishList(product)"
                                 class="text-white text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-gray-800 transition cursor-pointer"
                                 title="add to wishlist">

@@ -29,13 +29,13 @@ export const useCartStore = defineStore("cart", {
     },
   },
   actions: {
-    addToCart(product) {
+    addToCart(product, quantity = 1) {
       const index = this.cart.findIndex((item) => item.id === product.id);
 
       if (index !== -1) {
         this.cart[index].quantity++;
       } else {
-        product.quantity = 1;
+        product.quantity = quantity;
         this.cart.push(product);
       }
 
@@ -50,9 +50,9 @@ export const useCartStore = defineStore("cart", {
         return { success: false, message: "Product not found in cart!" };
       }
     },
-    clearCart(){
-      this.cart = []
-    }
+    clearCart() {
+      this.cart = [];
+    },
   },
   persist: true,
 });

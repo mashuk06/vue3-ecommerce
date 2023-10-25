@@ -1,17 +1,13 @@
 <script setup>
-import { ref, reactive } from 'vue'
 
-// Define your variables and logic here
-const myVariable = ref('Hello, World!')
-
-// Define your functions here
-const myFunction = () => {
-  // Function logic here
-}
 </script>
 
 <template>
-    <!-- Your template content here -->
+    <div class="col-span-9 shadow rounded px-6 pt-5 pb-7">
+    <h4 class="text-lg font-medium capitalize mb-4">
+      Reviews page
+    </h4>
+  </div>
 </template>
 
 <style scoped>

@@ -4,6 +4,7 @@ import { useAuthStore } from "../stores/authStore";
 import Layout from "../components/layouts/Layout.vue";
 import Home from "../components/Home.vue";
 import Products from "../components/Products.vue";
+import Product from "../components/SingleProduct.vue";
 import About from "../components/static/About.vue";
 import Contact from "../components/static/Contact.vue";
 import Cart from "../components/Cart.vue";
@@ -31,6 +32,11 @@ const routes = [
         path: "/shop/:category?",
         name: "shop",
         component: Products,
+      },
+      {
+        path: "/shop/product/:id",
+        name: "product",
+        component: Product,
       },
       {
         path: "/about",

@@ -17,8 +17,9 @@
         <div class="grid grid-cols-6 gap-3">
             <div class="relative rounded-sm overflow-hidden group" v-for="category,index in categories" :key="index">
                 <img :src="`https://source.unsplash.com/random/200x200?sig=${index}`" alt="category 1" class="w-full">
-                <a href="#"
-                    class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-sm text-white font-roboto font-medium group-hover:bg-opacity-60 transition uppercase">{{ category }}</a>
+                <router-link :to="{ name: 'shop', params: { category: category }}"
+                    class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-sm text-white font-roboto font-medium group-hover:bg-opacity-60 transition uppercase">{{
+                    category }}</router-link>
             </div>
         </div>
     </div>

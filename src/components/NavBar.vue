@@ -8,9 +8,9 @@
 
     onBeforeMount(() => {
         axios.get('https://dummyjson.com/products/categories')
-        .then(res => {
-            categories.value = res.data
-        })
+            .then(res => {
+                categories.value = res.data
+            })
     })
 
 </script>
@@ -25,9 +25,11 @@
                 <span class="capitalize ml-2 text-white">All Categories</span>
                 <div
                     class="absolute w-full left-0 top-full bg-white shadow-md py-3 divide-y divide-gray-300 divide-dashed opacity-0 group-hover:opacity-100 transition duration-300 invisible group-hover:visible">
-                    <a href="#" v-for="category,index in categories" :key="index" class="flex items-center px-6 py-3 hover:bg-gray-100 transition">
+                    <router-link :to="{ name: 'shop' , params: { category: category}}"
+                        v-for="category,index in categories" :key="index"
+                        class="flex items-center px-6 py-3 hover:bg-gray-100 transition">
                         <span class="ml-6 text-gray-600 text-sm">{{ category }}</span>
-                    </a>
+                    </router-link>
                 </div>
             </div>
 

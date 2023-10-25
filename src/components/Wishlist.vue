@@ -10,7 +10,7 @@
     const removeFromWishlist = (productId) => {
         const result = wishlist.removeFromWishlist(productId)
         if (result.success) {
-            toast.success(result.message)
+            toast.warning(result.message)
         } else {
             toast.error(result.message)
         }
